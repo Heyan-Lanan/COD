@@ -1,0 +1,34 @@
+.text
+    lw      x9, 0(x0)       #get io base address 3000
+ready1:
+    lw      x6, 16(x9)      #read valid 3004
+    beq     x6, x0, ready1  #if valid==1 then read data1 3008
+    lw      x1, 12(x9)      #read data_in 300c
+    sw      x1, 8(x9)       #display f1 3010
+wating1:    
+    lw      x6, 16(x9)      #read valid 3014
+    beq     x6, x0, ready2  #if valid==0 then data1 read done 3018
+    jal     x8, wating1
+ready2: 
+    lw      x6, 16(x9)      #read valid 3020
+    beq     x6, x0, ready2
+    lw      x2, 12(x9)      #read data_in 3028
+    sw      x2, 8(x9)       #display f2 302c
+wating2:    
+    lw      x6, 16(x9)      #read valid 3030
+    beq     x6, x0, fib	    #if valid==0 then data1 read done 3034
+    jal     x8, wating2
+fib:
+    add     x7, x1,x2  #303c
+    add     x1, x2,x0  #3040
+    add     x2, x7,x0  #3044
+ready3:
+    lw      x6, 16(x9)      #read valid 3048
+    beq     x6, x0, ready3 #304c
+    sw      x7, 8(x9)       #display fn 3050
+wating3:
+    lw      x6, 16(x9) #3054
+    beq     x6, x0, fib #3058
+    jal     x8, wating3 #305c
+.data
+    0x400
